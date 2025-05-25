@@ -1,0 +1,9 @@
+name: 诛仙反作弊系统
+version: '0.1-PreBeta'
+main: top.helloworldcoder.godkilleranticheat
+api-version: '1.21'
+prefix: &k&6|&r&a[ &r&l&6诛仙&r&b&n&o反作弊系统&r&a ]&r&k&6|
+  load: STARTUP
+  authors: [ HelloWorldCoder(-China) ]
+  description: 诛仙反作弊系统 | 诛尽天下邪仙,只留清白在人间 $> 我们要成为Minecraft最好的反作弊_
+  website: https://github.com/Dragon-Minecraft-Softwares/GodKillerACMinecraft
