@@ -3,7 +3,7 @@ package top.helloworldcoder;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Level; 
+import java.util.logging.Level;
 
 public final class godkilleranticheat extends JavaPlugin implements Listener
 {
