@@ -1,4 +1,4 @@
-package top.helloworldcoder;
+package DragonMCSoftwares;
 
 import DragonUtils.banning;
 import DragonUtils.banning.banlisttype;
@@ -16,7 +16,7 @@ import DragonUtils.logging;
 import java.util.*;
 import java.util.logging.Level;
 
-public final class godkilleranticheat extends JavaPlugin implements Listener
+public final class GodKillerAnticheat extends JavaPlugin implements Listener
 {
     String chatprefix="&k&6|&r&a[&r&l&6诛仙&r&b&n&o反作弊系统&r&a]&r&k&6| &r&6&l";
     String banprefix="&6&k|&a&k[&r&l&6诛仙&r&b&n&o反作弊系统&r&a&k]&6&k|&r";
@@ -99,7 +99,7 @@ public final class godkilleranticheat extends JavaPlugin implements Listener
         {
             if(sender.hasPermission("godkilleracmc.bancontrol.ban"))
             {
-                cmd.setAliases()
+                loging(Level.WARNING,"占位代码已被执行,请检查源代码");
             }
         }
         return false;
