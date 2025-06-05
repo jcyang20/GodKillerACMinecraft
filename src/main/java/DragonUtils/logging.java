@@ -1,3 +1,7 @@
+// Created by HelloWorldCoder on 2025/5/27 13:38 Last Edited 2025/6/1 9:37
+// MODIFICATION IS NOT ALLOWED
+// A Part Of DragonUtils
+
 package DragonUtils;
 
 import java.util.logging.Level;
@@ -7,7 +11,7 @@ public final class logging
 {
     static
     {
-        logging.log(Level.INFO,"&6[DragonUtils] &r","&aSuccessfully Loaded &r&6&_DragonUtils by HelloWorldCoder-China&r&a !&r");
+        logging.log(Level.INFO,"&6[DragonUtils] &r","&aSuccessfully Loaded &bModule [logging] &r&ain &r&6&_DragonUtils by HelloWorldCoder-China&r&a !&r");
     }
     public static String ANSIDataBase(char colorcode) // ANSI数据库,手打
     {
@@ -37,9 +41,13 @@ public final class logging
         if(colorcode=='-') return "&";
         return "\u001B[31;22m\u001B[21m[ERROR]\u001B[0;39m\u001B[31;22m Color Code NOT FOUND: "+colorcode+"!\u001B[0m\u001B[0;39m\u001B[24m";
     }
+    public static String ChangeColorcode(String Source)
+    {
+        return Source.replaceAll("&","§"); // 初始化字符串
+    }
     public static String ANSIChange(String Source) // ANSI转换器
     {
-        Source=Source.replaceAll("&","§"); // 初始化字符串
+        Source=ChangeColorcode(Source);
         while(Source.contains("§")) // 查找
         {
             char colorcode=Source.charAt(Source.indexOf("§")+1);
