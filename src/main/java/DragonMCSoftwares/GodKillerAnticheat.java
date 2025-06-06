@@ -1,5 +1,6 @@
 package DragonMCSoftwares;
 
+import OutSideAPIs.bStats.Metrics;
 import DragonUtils.banning;
 import DragonUtils.banning.banlisttype;
 import org.bukkit.command.Command;
@@ -44,6 +45,8 @@ public final class GodKillerAnticheat extends JavaPlugin implements Listener
         loging(Level.INFO,"加载配置文件...");
         // 加载配置文件
         loging(Level.INFO,"插件配置加载完成");
+        loging(Level.INFO,"正在加载bStats,这不会收集你的个人数据,请放心使用...");
+        Metrics metrics = new Metrics(this,26100);
         loging(Level.INFO,"正在注册命令...");
         loging(Level.INFO,"插件启动完成");
     }
