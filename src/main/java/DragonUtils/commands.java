@@ -1,3 +1,6 @@
+// 暂时废弃,请勿使用
+
+/*
 package DragonUtils;
 
 import org.bukkit.command.PluginCommand;
@@ -9,7 +12,7 @@ public class commands
     {
         try
         {
-            PluginCommand newcommand=new PluginCommand("424",plugin);
+            //PluginCommand newcommand=new PluginCommand("424",plugin);
             return true;
         }
         catch(Exception e)
@@ -18,3 +21,4 @@ public class commands
         }
     }
 }
+*/
