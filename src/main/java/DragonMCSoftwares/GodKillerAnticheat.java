@@ -42,11 +42,15 @@ public final class GodKillerAnticheat extends JavaPlugin implements Listener
         loging(Level.INFO,"启动事件监听...");
         getServer().getPluginManager().registerEvents(this, this);
         loging(Level.INFO,"监听启动完成");
+        loging(Level.INFO,"初始化快速封禁检查...");
+        banning.fastipinit(banlist);
+        loging(Level.INFO,"快速封禁检查初始化完成");
         loging(Level.INFO,"加载配置文件...");
         // 加载配置文件
         loging(Level.INFO,"插件配置加载完成");
         loging(Level.INFO,"正在加载bStats,这不会收集你的个人数据,请放心使用...");
         Metrics metrics = new Metrics(this,26100);
+        loging(Level.INFO,"bStats加载完成");
         loging(Level.INFO,"正在注册命令...");
         loging(Level.INFO,"插件启动完成");
     }
@@ -102,7 +106,7 @@ public final class GodKillerAnticheat extends JavaPlugin implements Listener
         {
             if(sender.hasPermission("godkilleracmc.bancontrol.ban"))
             {
-                loging(Level.WARNING,"占位代码已被执行,请检查源代码");
+
             }
         }
         return false;

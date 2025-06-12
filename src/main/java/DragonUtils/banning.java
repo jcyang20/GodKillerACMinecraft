@@ -17,6 +17,41 @@ public class banning
         logging.log(Level.INFO,"&6[DragonUtils] &r","&aSuccessfully Loaded &bModule [banning] &r&ain &r&6&_DragonUtils by HelloWorldCoder-China&r&a !&r");
     }
 
+    static class fastlookup4
+    {
+        public static boolean[] ip1=new boolean[257];
+        public static boolean[] ip2=new boolean[257];
+        public static boolean[] ip3=new boolean[257];
+        public static int[] ip4=new int[257];
+    }
+
+    fastlookup4 fastlookupv4=new fastlookup4();
+
+    public static void fastipinit(List<banlisttype> banlist)
+    {
+        for(banlisttype banlistthing:banlist)
+        {
+            if(banlistthing.ip.contains("."))
+            {
+                String[] ip=banlistthing.ip.split("\\.");
+                fastlookup4.ip1[Integer.parseInt(ip[0])]=true;
+                fastlookup4.ip2[Integer.parseInt(ip[1])]=true;
+                fastlookup4.ip3[Integer.parseInt(ip[2])]=true;
+                fastlookup4.ip4[Integer.parseInt(ip[3])]=banlist.indexOf(banlistthing);
+            }
+        }
+    }
+
+    public static int checkipfast(String ipin)
+    {
+        if(ipin.contains("."))
+        {
+            String[] ip=ipin.split("\\.");
+            if(fastlookup4.ip1[Integer.parseInt(ip[0])] && fastlookup4.ip2[Integer.parseInt(ip[1])] && fastlookup4.ip3[Integer.parseInt(ip[2])] && fastlookup4.ip4[Integer.parseInt(ip[3])]!=0) return fastlookup4.ip4[Integer.parseInt(ip[3])];
+        }
+        return 0;
+    }
+
     public static class banlisttype // 封禁信息储存
     {
         public String name;
@@ -98,34 +133,42 @@ public class banning
     }
 
     // 封禁信息查询
+    static banreturntype bantimecheck(List<banlisttype> banlist,banlisttype list)
+    {
+        if(list.time>System.currentTimeMillis() || list.time==-1)
+        {
+            banreturntype banreturntype=new banreturntype();
+            banreturntype.banned=true;
+            banreturntype.name=list.name;
+            banreturntype.ip=list.ip;
+            banreturntype.time=list.time;
+            banreturntype.reason=list.reason;
+            banreturntype.duration=list.duration;
+            banreturntype.pointer=banlist.indexOf(list);
+            return banreturntype;
+        }
+        banreturntype banreturntype=new banreturntype();
+        banreturntype.banned=false;
+        banreturntype.name=list.name;
+        banreturntype.ip=list.ip;
+        banreturntype.time=list.time;
+        banreturntype.reason=list.reason;
+        banreturntype.duration=list.duration;
+        banreturntype.pointer=banlist.indexOf(list);
+        return banreturntype;
+    }
     public static banreturntype isbanned(List<banlisttype> banlist,String name,String ip)
     {
+        if(checkipfast(ip)!=0)
+        {
+            return bantimecheck(banlist,banlist.get(checkipfast(ip)));
+        }
         for(banlisttype list:banlist)
         {   // 判断玩家是否被封禁，目前遍历，不知道大佬们有没有更好的解决方法
             if(list.name.equalsIgnoreCase(name) || list.ip.equalsIgnoreCase(ip))
             {
                 // 解封时间判定
-                if(list.time>System.currentTimeMillis() || list.time==-1)
-                {
-                    banreturntype banreturntype=new banreturntype();
-                    banreturntype.banned=true;
-                    banreturntype.name=list.name;
-                    banreturntype.ip=list.ip;
-                    banreturntype.time=list.time;
-                    banreturntype.reason=list.reason;
-                    banreturntype.duration=list.duration;
-                    banreturntype.pointer=banlist.indexOf(list);
-                    return banreturntype;
-                }
-                banreturntype banreturntype=new banreturntype();
-                banreturntype.banned=false;
-                banreturntype.name=list.name;
-                banreturntype.ip=list.ip;
-                banreturntype.time=list.time;
-                banreturntype.reason=list.reason;
-                banreturntype.duration=list.duration;
-                banreturntype.pointer=banlist.indexOf(list);
-                return banreturntype;
+                return bantimecheck(banlist,list);
             }
         }
         banreturntype banreturntype=new banreturntype();
