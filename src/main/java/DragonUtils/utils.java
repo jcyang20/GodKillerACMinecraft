@@ -65,6 +65,7 @@ public class utils
     }
 
     public static long parseDurationToMillis(String durationStr) {
+        // 匹配时间段格式
         final String REGEX = "(?<years>\\d+)?y(?<months>\\d+)?m(?<days>\\d+)?d(?<hours>\\d+)?h(?<minutes>\\d+)?m(?<seconds>\\d+)?s";
         Pattern pattern = Pattern.compile(REGEX);
         Matcher matcher = pattern.matcher(durationStr);
