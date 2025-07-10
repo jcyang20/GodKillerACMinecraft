@@ -64,27 +64,24 @@ public class utils
         return "null";
     }
 
-    /*
-    一个错误的时间转换函数,正则表达式不能用,求大佬帮助
-    一个错误的时间转换函数,正则表达式不能用,求大佬帮助
-    一个错误的时间转换函数,正则表达式不能用,求大佬帮助
-    一个错误的时间转换函数,正则表达式不能用,求大佬帮助
-    一个错误的时间转换函数,正则表达式不能用,求大佬帮助
-
-    public static long parseDurationToMillis(String durationStr)
-    {
-        final String REGEX = "(?<years>\$$0-9]+)y(?<months>\$$0-9]+)m(?<days>\$$0-9]+)d(?<hours>\$$0-9]+)h(?<minutes>\$$0-9]+)m(?<seconds>\$$0-9]+)s";
+    public static long parseDurationToMillis(String durationStr) {
+        final String REGEX = "(?<years>\\d+)?y(?<months>\\d+)?m(?<days>\\d+)?d(?<hours>\\d+)?h(?<minutes>\\d+)?m(?<seconds>\\d+)?s";
         Pattern pattern = Pattern.compile(REGEX);
         Matcher matcher = pattern.matcher(durationStr);
+
         if (!matcher.matches()) {
             throw new IllegalArgumentException("无效的时间段格式: " + durationStr);
         }
-        long years = Long.parseLong(matcher.group("years"));
-        long months = Long.parseLong(matcher.group("months"));
-        long days = Long.parseLong(matcher.group("days"));
-        long hours = Long.parseLong(matcher.group("hours"));
-        long minutes = Long.parseLong(matcher.group("minutes"));
-        long seconds = Long.parseLong(matcher.group("seconds"));
+
+        // 提取各个时间单位，如果不存在则默认为0
+        long years = matcher.group("years") != null ? Long.parseLong(matcher.group("years")) : 0;
+        long months = matcher.group("months") != null ? Long.parseLong(matcher.group("months")) : 0;
+        long days = matcher.group("days") != null ? Long.parseLong(matcher.group("days")) : 0;
+        long hours = matcher.group("hours") != null ? Long.parseLong(matcher.group("hours")) : 0;
+        long minutes = matcher.group("minutes") != null ? Long.parseLong(matcher.group("minutes")) : 0;
+        long seconds = matcher.group("seconds") != null ? Long.parseLong(matcher.group("seconds")) : 0;
+
+        // 转换为毫秒数
         return years * 365L * 24 * 60 * 60 * 1000
                 + months * 30L * 24 * 60 * 60 * 1000
                 + days * 24 * 60 * 60 * 1000
@@ -92,5 +89,4 @@ public class utils
                 + minutes * 60 * 1000
                 + seconds * 1000;
     }
-    */
 }
