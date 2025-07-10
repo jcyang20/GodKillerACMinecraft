@@ -2,12 +2,16 @@
 // MODIFICATION IS NOT ALLOWED
 // A Part Of DragonUtils
 
-package DragonUtils;
+package DragonMCSoftwares;
 
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import DragonUtils.logging;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.logging.Level;
+
+import static DragonUtils.utils.formattimeprd;
 
 // 时间使用long防止溢出
 public class banning
@@ -58,7 +62,7 @@ public class banning
         public String ip;
         public long time;
         public String reason;
-        public int duration;
+        public long duration;
     }
 
     public static class banreturntype // 封禁信息返回
@@ -68,11 +72,11 @@ public class banning
         public String ip;
         public long time;
         public String reason;
-        public int duration;
+        public long duration;
         public int pointer;
     }
 
-    public static boolean addban(List<banlisttype> banlist,String name,String ip,long time,String reason,int duration)
+    public static boolean addban(List<banlisttype> banlist,String name,String ip,long time,String reason,long duration)
     {
         banlisttype banlistthing=new banlisttype();
         banlistthing.name=name;
@@ -85,7 +89,7 @@ public class banning
     }
 
     // 封禁函数
-    public static int ban(List<banlisttype> banlist,String name,String ip,int timemup,int duration,String reason,boolean mercy,long timebefore)
+    public static int ban(List<banlisttype> banlist,String name,String ip,int timemup,long duration,String reason,boolean mercy,long timebefore)
     {
         int count=-1;
         if(mercy) count=mercywave(banlist,timebefore);
@@ -99,6 +103,8 @@ public class banning
             }
         }
         addban(banlist,name,ip,duration+System.currentTimeMillis(),reason,duration);
+        Player banedplayer= Bukkit.getPlayer(name);
+        if(banedplayer.isOnline()) banedplayer.kickPlayer(logging.ChangeColorcode(GodKillerAnticheat.banprefix+"\n&b诛仙!你被封印了!"+ "\n&6&k|&r&6&l剩余封印时间&r&6&k| &r&a&n"+ formattimeprd(duration,logging.ChangeColorcode("&byyyy&4年 &bMM&c月 &bdd&e天 | &bHH&2小时 &bmm&a分钟 &bss&9秒"))+"&r"+"\n&c&l理由: &r&e&n"+reason));
         return count;
     }
 
@@ -135,7 +141,7 @@ public class banning
     // 封禁信息查询
     static banreturntype bantimecheck(List<banlisttype> banlist,banlisttype list)
     {
-        if(list.time>System.currentTimeMillis() || list.time==-1)
+        if(list.time>System.currentTimeMillis() || list.time==0)
         {
             banreturntype banreturntype=new banreturntype();
             banreturntype.banned=true;

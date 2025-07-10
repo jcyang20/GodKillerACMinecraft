@@ -1,31 +1,26 @@
 package DragonMCSoftwares;
 
 import OutSideAPIs.bStats.Metrics;
-import DragonUtils.banning;
-import DragonUtils.banning.banlisttype;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import DragonMCSoftwares.banning.banlisttype;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 import DragonUtils.logging;
-
+import DragonMCSoftwares.commands;
 import java.util.*;
 import java.util.logging.Level;
+import static DragonUtils.utils.formattimeprd;
 
 public final class GodKillerAnticheat extends JavaPlugin implements Listener
 {
-    String chatprefix="&k&6|&r&a[&r&l&6诛仙&r&b&n&o反作弊系统&r&a]&r&k&6| &r&6&l";
-    String banprefix="&6&k|&a&k[&r&l&6诛仙&r&b&n&o反作弊系统&r&a&k]&6&k|&r";
+    public static String chatprefix="&k&6|&r&a[&r&l&6诛仙&r&b&n&o反作弊系统&r&a]&r&k&6| &r&6&l";
+    public static String banprefix="&6&k|&a&k[&r&l&6诛仙&r&b&n&o反作弊系统&r&a&k]&6&k|&r";
     public void loging(Level level,String message)
     {
         logging.log(level,chatprefix,message);
     }
-    List<banlisttype> banlist=new ArrayList<>(); // 封禁列表每组数据1号为玩家名,2号为IP,3号为时间,4号为原因
+    public static List<banlisttype> banlist=new ArrayList<>(); // 封禁列表每组数据1号为玩家名,2号为IP,3号为时间,4号为原因
     @Override
     public void onEnable()
     {
@@ -52,6 +47,8 @@ public final class GodKillerAnticheat extends JavaPlugin implements Listener
         Metrics metrics = new Metrics(this,26100);
         loging(Level.INFO,"bStats加载完成");
         loging(Level.INFO,"正在注册命令...");
+        commands.commandinit();
+        loging(Level.INFO,"插件命令注册完成");
         loging(Level.INFO,"插件启动完成");
     }
 
@@ -64,9 +61,9 @@ public final class GodKillerAnticheat extends JavaPlugin implements Listener
         if(baninfo.banned)
         {
             // 封禁中
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED,logging.ChangeColorcode(banprefix+"\n&b诛仙!你被封印了!"+ "\n&6&k|&r&6&l剩余封印时间&r&6&k| &r&a&n"+baninfo.time+"&r"+"\n&c&l理由: &r&e&n"+baninfo.reason)); // 目前使用踢出，占用较大，且有漏洞风险，不知道大佬们有没有类似TempBan那种解决方案可以用
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED,logging.ChangeColorcode(banprefix+"\n&b诛仙!你被封印了!"+ "\n&6&k|&r&6&l剩余封印时间&r&6&k| &r&a&n"+ formattimeprd(baninfo.time,logging.ChangeColorcode("&byyyy&4年 &bMM&c月 &bdd&e天 | &bHH&2小时 &bmm&a分钟 &bss&9秒"))+"&r"+"\n&c&l理由: &r&e&n"+baninfo.reason)); // 目前使用踢出，占用较大，且有漏洞风险，不知道大佬们有没有类似TempBan那种解决方案可以用
             // 封禁信息提示至log
-            loging(Level.INFO,"被封印玩家"+event.getName()+"被踢出了服务器,理由: "+baninfo.reason+"剩余封印时间: "+baninfo.time);
+            loging(Level.INFO,"被封印玩家"+event.getName()+"被踢出了服务器,理由: "+baninfo.reason+"剩余封印时间: "+ formattimeprd(baninfo.time,logging.ChangeColorcode("&byyyy&4年 &bMM&c月 &bdd&e天 | &bHH&2小时 &bmm&a分钟 &bss&9秒")));
             if(event.getName()!=baninfo.name)
             {
                 boolean flag=true;
@@ -96,20 +93,6 @@ public final class GodKillerAnticheat extends JavaPlugin implements Listener
         }
         else loging(Level.INFO,"玩家["+event.getName()+"]("+event.getAddress()+")登陆审查通过: 无封禁");
         if(!baninfo.banned && baninfo.duration!=0 && baninfo.name!="") loging(Level.WARNING,"玩家["+event.getName()+"]("+event.getAddress()+")登陆审查: 玩家有已解封但是还在考察期的封禁记录!");
-    }
-
-    // 命令处理
-    @Override
-    public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args)
-    {
-        if(cmd.getName().equalsIgnoreCase("ban") || cmd.getName().equalsIgnoreCase("totalban") || cmd.getName().equalsIgnoreCase("tempban") || cmd.getName().equalsIgnoreCase("ban-ip"))
-        {
-            if(sender.hasPermission("godkilleracmc.bancontrol.ban"))
-            {
-
-            }
-        }
-        return false;
     }
 
     @Override
