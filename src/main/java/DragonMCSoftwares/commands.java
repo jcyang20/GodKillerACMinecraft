@@ -81,7 +81,7 @@ public class commands
                         // 计算封禁时长（秒转毫秒）
                         long dut = 0;
                         if (args.length >= 3) dut = Long.parseLong(args[2]) * 1000;
-                        banning.ban(banlist,args[0],utils.getplayerip(banedplayer),0,dut,args[1],false,System.currentTimeMillis());
+                        if(bannedplayer!=null) banning.ban(banlist,args[0],utils.getplayerip(banedplayer),0,dut,args[1],false,System.currentTimeMillis());
                         sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatprefix + "&a&l成功将玩家 &e"+args[0]+" &a以&b "+args[1]+" &a为理由封印&9 "+args[2]+" &a秒&r"));
                         return true;
                     }
