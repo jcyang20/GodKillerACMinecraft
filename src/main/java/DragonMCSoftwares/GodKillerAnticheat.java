@@ -12,15 +12,33 @@ import java.util.*;
 import java.util.logging.Level;
 import static DragonUtils.utils.formattimeprd;
 
-public final class GodKillerAnticheat extends JavaPlugin implements Listener
-{
-    public static String chatprefix="&k&6|&r&a[&r&l&6诛仙&r&b&n&o反作弊系统&r&a]&r&k&6| &r&6&l";
-    public static String banprefix="&6&k|&a&k[&r&l&6诛仙&r&b&n&o反作弊系统&r&a&k]&6&k|&r";
-    public void loging(Level level,String message)
-    {
-        logging.log(level,chatprefix,message);
+/**
+ * 诛仙反作弊系统主类
+ * 负责插件的初始化、事件监听和资源管理
+ */
+public final class GodKillerAnticheat extends JavaPlugin implements Listener {
+    
+    /** 聊天消息前缀 */
+    public static String chatprefix = "&k&6|&r&a[&r&l&6诛仙&r&b&n&o反作弊系统&r&a]&r&k&6| &r&6&l";
+    
+    /** 封禁消息前缀 */
+    public static String banprefix = "&6&k|&a&k[&r&l&6诛仙&r&b&n&o反作弊系统&r&a&k]&6&k|&r";
+    
+    /**
+     * 记录日志的便捷方法
+     * 
+     * @param level   日志级别
+     * @param message 日志消息
+     */
+    public void loging(Level level, String message) {
+        logging.log(level, chatprefix, message);
     }
-    public static List<banlisttype> banlist=new ArrayList<>(); // 封禁列表每组数据1号为玩家名,2号为IP,3号为时间,4号为原因
+    
+    /** 
+     * 封禁列表
+     * 存储所有被封禁玩家的信息
+     */
+    public static List<banlisttype> banlist = new ArrayList<>();
     @Override
     public void onEnable()
     {
