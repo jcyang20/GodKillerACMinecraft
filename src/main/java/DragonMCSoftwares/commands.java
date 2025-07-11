@@ -8,10 +8,12 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
 import static DragonMCSoftwares.GodKillerAnticheat.banlist;
 import static org.bukkit.Bukkit.getOnlinePlayers;
 
@@ -29,8 +31,8 @@ public class commands {
      */
     public static boolean commandinit() {
         GodKillerAnticheat plugin = GodKillerAnticheat.getPlugin(GodKillerAnticheat.class);
-        plugin.getCommand("ban").setExecutor(new bancommandexcute());
-        plugin.getCommand("ban").setTabCompleter(new bancommandcomplete());
+        Objects.requireNonNull(plugin.getCommand("ban")).setExecutor(new bancommandexcute());
+        Objects.requireNonNull(plugin.getCommand("ban")).setTabCompleter(new bancommandcomplete());
         return true;
     }
     
@@ -49,7 +51,7 @@ public class commands {
          * @param args    命令参数
          * @return 命令执行成功返回true，否则返回false
          */
-        public boolean onCommand(CommandSender sender, Command command, String lable, String[] args) {
+        public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String lable, @NotNull String[] args) {
             if (command.getName().equalsIgnoreCase("ban")) {
                 // 检查发送者是否有权限执行ban命令
                 if (sender.hasPermission("godkilleracmc.bancontrol.ban")) {
@@ -62,7 +64,9 @@ public class commands {
                             dut = Long.parseLong(args[2]) * 1000;
                         }
                         // 执行封禁
-                        banning.ban(banlist, args[0], utils.getplayerip(banedplayer), 0, dut, args[1], false, System.currentTimeMillis());
+                        if (banedplayer != null) {
+                            banning.ban(banlist, args[0], utils.getplayerip(banedplayer), 0, dut, args[1], false, System.currentTimeMillis());
+                        }
                         return true;
                     } catch (Exception e) {
                         // 参数错误或其他异常
@@ -92,7 +96,7 @@ public class commands {
          * @param args    当前已输入的参数
          * @return 补全建议列表，如果没有建议则返回null
          */
-        public List<String> onTabComplete(CommandSender sender, Command command, String lable, String[] args) {
+        public List<String> onTabComplete(@NotNull CommandSender sender, Command command, @NotNull String lable, @NotNull String[] args) {
             if (command.getName().equalsIgnoreCase("ban")) {
                 // 检查发送者是否有权限执行ban命令
                 if (sender.hasPermission("godkilleracmc.bancontrol.ban")) {

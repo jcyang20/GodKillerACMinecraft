@@ -19,9 +19,9 @@ import static DragonUtils.utils.formattimeprd;
  * 时间使用long类型防止溢出
  */
 public class banning {
-    /**
-     * 静态初始化块，在类加载时执行
-     * 记录模块加载信息到日志
+    /*
+      静态初始化块，在类加载时执行
+      记录模块加载信息到日志
      */
     static {
         logging.log(Level.INFO, "&6[DragonUtils] &r", "&aSuccessfully Loaded &bModule [banning] &r&ain &r&6&_DragonUtils by HelloWorldCoder-China&r&a !&r");
@@ -38,7 +38,7 @@ public class banning {
         public static int[] ip4 = new int[257];         // 第四段IP地址，存储对应的封禁列表索引
     }
 
-    fastlookup4 fastlookupv4 = new fastlookup4();
+//    fastlookup4 fastlookupv4 = new fastlookup4();
 
     /**
      * 初始化IP快速查找表
@@ -241,11 +241,7 @@ public class banning {
         banreturntype.pointer = banlist.indexOf(list);
         
         // 检查封禁是否有效（时间大于当前时间或为永久封禁）
-        if (list.time > System.currentTimeMillis() || list.time == 0) {
-            banreturntype.banned = true;
-        } else {
-            banreturntype.banned = false;
-        }
+        banreturntype.banned = list.time > System.currentTimeMillis() || list.time == 0;
         
         return banreturntype;
     }
