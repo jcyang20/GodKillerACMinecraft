@@ -5,3 +5,17 @@ gradle-app.setting
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
+
+# 忽略日志文件
+*.log
+
+# 忽略编译产物
+*.class
+*.jar
+*.exe
+
+# 忽略IDEA的配置文件
+.idea
+
+# 忽略本地配置文件
+.build
