@@ -1,4 +1,4 @@
-// Created by HelloWorldCoder on 2025/5/27 13:38 Last Edited 2025/6/1 9:37
+// Created by HelloWorldCoder on 2025/5/27 13:38
 // MODIFICATION IS NOT ALLOWED
 // A Part Of DragonUtils
 
@@ -28,72 +28,25 @@ public class banning {
     }
 
     /**
-     * IP快速查找内部类
-     * 用于存储IP地址的各个部分，加速IP查找过程
-     */
-    static class fastlookup4 {
-        public static boolean[] ip1 = new boolean[257]; // 第一段IP地址
-        public static boolean[] ip2 = new boolean[257]; // 第二段IP地址
-        public static boolean[] ip3 = new boolean[257]; // 第三段IP地址
-        public static int[] ip4 = new int[257];         // 第四段IP地址，存储对应的封禁列表索引
-    }
-
-//    fastlookup4 fastlookupv4 = new fastlookup4();
-
-    /**
-     * 初始化IP快速查找表
-     * 将封禁列表中的IP地址解析并存储到快速查找表中
-     * 
-     * @param banlist 封禁列表
-     */
-    public static void fastipinit(List<banlisttype> banlist) {
-        for (banlisttype banlistthing : banlist) {
-            if (banlistthing.ip.contains(".")) {
-                String[] ip = banlistthing.ip.split("\\.");
-                fastlookup4.ip1[Integer.parseInt(ip[0])] = true;
-                fastlookup4.ip2[Integer.parseInt(ip[1])] = true;
-                fastlookup4.ip3[Integer.parseInt(ip[2])] = true;
-                fastlookup4.ip4[Integer.parseInt(ip[3])] = banlist.indexOf(banlistthing);
-            }
-        }
-    }
-
-    /**
-     * 快速检查IP是否在封禁列表中
-     * 
-     * @param ipin 要检查的IP地址
-     * @return 如果IP被封禁，返回封禁列表中的索引；否则返回0
-     */
-    public static int checkipfast(String ipin) {
-        if (ipin.contains(".")) {
-            String[] ip = ipin.split("\\.");
-            if (fastlookup4.ip1[Integer.parseInt(ip[0])] && 
-                fastlookup4.ip2[Integer.parseInt(ip[1])] && 
-                fastlookup4.ip3[Integer.parseInt(ip[2])] && 
-                fastlookup4.ip4[Integer.parseInt(ip[3])] != 0) {
-                return fastlookup4.ip4[Integer.parseInt(ip[3])];
-            }
-        }
-        return 0;
-    }
-
-    /**
      * 封禁信息存储类
      * 用于存储玩家的封禁信息
      */
-    public static class banlisttype {
-        public String name;     // 玩家名称
-        public String ip;       // 玩家IP地址
-        public long time;       // 解封时间（时间戳）
-        public String reason;   // 封禁原因
-        public long duration;   // 封禁持续时间（毫秒）
+    public static class banlisttype // 封禁信息储存
+    {
+        public String name;      // 玩家名称
+        public String ip;        // 玩家IP
+        public long time;        // 解封时间（时间戳） 
+        public String reason;    // 封禁原因
+        public long duration;    // 封禁持续时间（毫秒）
+        public int banid;        // ban id
     }
 
     /**
      * 封禁信息返回类
      * 用于返回玩家的封禁状态和详细信息
      */
-    public static class banreturntype {
+    public static class banreturntype // 封禁信息返回
+    {
         public boolean banned;  // 是否被封禁
         public String name;     // 玩家名称
         public String ip;       // 玩家IP地址
@@ -101,6 +54,7 @@ public class banning {
         public String reason;   // 封禁原因
         public long duration;   // 封禁持续时间（毫秒）
         public int pointer;     // 在封禁列表中的索引
+        public int banid;       // ban id
     }
 
     /**
@@ -114,66 +68,69 @@ public class banning {
      * @param duration 封禁持续时间（毫秒）
      * @return 添加成功返回true
      */
-    public static boolean addban(List<banlisttype> banlist, String name, String ip, long time, String reason, long duration) {
-        banlisttype banlistthing = new banlisttype();
-        banlistthing.name = name;
-        banlistthing.ip = ip;
-        banlistthing.time = time;
-        banlistthing.reason = reason;
-        banlistthing.duration = duration;
+    public static boolean addban(List<banlisttype> banlist,String name,String ip,long time,String reason,long duration,int banid)  // 封禁信息添加
+    {
+        banlisttype banlistthing=new banlisttype();
+        banlistthing.name=name;
+        banlistthing.ip=ip;
+        banlistthing.time=time;
+        banlistthing.reason=reason;
+        banlistthing.duration=duration;
+        banlistthing.banid=banid;
         banlist.add(banlistthing);
         return true;
     }
-
     /**
      * 封禁玩家
      * 
      * @param banlist    封禁列表
      * @param name       玩家名称
      * @param ip         玩家IP地址
-     * @param timemup    时间倍数（用于累计封禁）
+     * @param timemup    封禁时间倍数
      * @param duration   封禁持续时间（毫秒）
      * @param reason     封禁原因
-     * @param mercy      是否执行解封波（在封禁前清理过期的封禁记录）
-     * @param timebefore 解封波的时间阈值
+     * @param mercy      控制是否运行宽恕
+     * @param timebefore 封禁历史宽恕时间戳
      * @return 如果执行了解封波，返回解封的数量；否则返回-1
      */
-    public static int ban(List<banlisttype> banlist, String name, String ip, int timemup, long duration, String reason, boolean mercy, long timebefore) {
+    public static int ban(List<banlisttype> banlist,String name,String ip,int timemup,long duration,String reason,boolean mercy,long timebefore)
+    {
         int count = -1;
-        // 如果启用了解封波，执行解封操作
-        if (mercy) {
-            count = mercywave(banlist, timebefore);
+        // 如果启用了宽恕，执行解封操作
+        if(mercy) {
+          count = mercywave(banlist,timebefore);
         }
-        
-        // 转换颜色代码
         reason = logging.ChangeColorcode(reason);
-        
-        // 检查玩家是否已被封禁，如果是，则累加封禁时间
-        for (banlisttype banlistthing : banlist) {
-            if (banlistthing.name.equals(name) || banlistthing.ip.equals(ip)) {
-                addban(banlist, name, ip, 
-                       banlistthing.duration * timemup + duration + System.currentTimeMillis(), 
-                       reason, 
-                       banlistthing.duration * timemup + duration);
+        int banid = banlist.size();
+        for(banlisttype banlistthing : banlist)
+        {
+            if(banlistthing.banid == banid)
+            {
+                Player banedplayer = Bukkit.getPlayer(name);
+                if(banedplayer.isOnline()) banedplayer.kickPlayer(logging.ChangeColorcode(GodKillerAnticheat.banprefix+"\n&b诛仙!你被封印了!"+ "\n&6&k|&r&6&l剩余封印时间&r&6&k| &r&a&n"+ formattimeprd(duration,logging.ChangeColorcode("&byyyy&4年 &bMM&c月 &bdd&e天 | &bHH&2小时 &bmm&a分钟 &bss&9秒"))+"&r"+"\n&c&l理由: &r&e&n"+reason));
                 return count;
             }
+            if(banlistthing.name.equals(name) || banlistthing.ip.equals(ip))
+            {
+                if(banlistthing.ip.equals(ip))
+                {
+                    addban(banlist, name, ip, banlistthing.duration * timemup + duration + System.currentTimeMillis(), reason, banlistthing.duration * timemup + duration,banid);
+                    addban(banlist,banlistthing.name,banlistthing.ip,banlistthing.duration * timemup + duration + System.currentTimeMillis(), reason, banlistthing.duration * timemup + duration,banid);
+                    banlist.remove(banlistthing);
+                }
+                Player banedplayer= Bukkit.getPlayer(name);
+                if(banedplayer.isOnline()) banedplayer.kickPlayer(logging.ChangeColorcode(GodKillerAnticheat.banprefix+"\n&b诛仙!你被封印了!"+ "\n&6&k|&r&6&l剩余封印时间&r&6&k| &r&a&n"+ formattimeprd(duration,logging.ChangeColorcode("&byyyy&4年 &bMM&c月 &bdd&e天 | &bHH&2小时 &bmm&a分钟 &bss&9秒"))+"&r"+"\n&c&l理由: &r&e&n"+reason));
+                if(banlistthing.name.equals(name))
+                {
+                    banlist.remove(banlistthing);
+                    addban(banlist,name,ip,banlistthing.duration*timemup+duration+System.currentTimeMillis(),reason,banlistthing.duration*timemup+duration,banid);  // 封禁时间追加
+                }
+            }
         }
-        
-        // 如果玩家未被封禁，添加新的封禁记录
-        addban(banlist, name, ip, duration + System.currentTimeMillis(), reason, duration);
-        
-        // 如果玩家在线，踢出玩家
-        Player banedplayer = Bukkit.getPlayer(name);
-        if (banedplayer != null && banedplayer.isOnline()) {
-            banedplayer.kickPlayer(logging.ChangeColorcode(
-                GodKillerAnticheat.banprefix + 
-                "\n&b诛仙!你被封印了!" + 
-                "\n&6&k|&r&6&l剩余封印时间&r&6&k| &r&a&n" + 
-                formattimeprd(duration, logging.ChangeColorcode("&byyyy&4年 &bMM&c月 &bdd&e天 | &bHH&2小时 &bmm&a分钟 &bss&9秒")) + 
-                "&r" + 
-                "\n&c&l理由: &r&e&n" + reason));
-        }
-        
+
+        addban(banlist,name,ip,duration+System.currentTimeMillis(),reason,duration,banid);
+        Player banedplayer= Bukkit.getPlayer(name);
+        if(banedplayer.isOnline()) banedplayer.kickPlayer(logging.ChangeColorcode(GodKillerAnticheat.banprefix+"\n&b诛仙!你被封印了!"+ "\n&6&k|&r&6&l剩余封印时间&r&6&k| &r&a&n"+ formattimeprd(duration,logging.ChangeColorcode("&byyyy&4年 &bMM&c月 &bdd&e天 | &bHH&2小时 &bmm&a分钟 &bss&9秒"))+"&r"+"\n&c&l理由: &r&e&n"+reason));
         return count;
     }
 
@@ -229,55 +186,51 @@ public class banning {
      * @param list    要检查的封禁记录
      * @return 封禁信息返回对象，包含封禁状态和详细信息
      */
-    static banreturntype bantimecheck(List<banlisttype> banlist, banlisttype list) {
-        banreturntype banreturntype = new banreturntype();
-        
-        // 填充返回对象的基本信息
-        banreturntype.name = list.name;
-        banreturntype.ip = list.ip;
-        banreturntype.time = list.time;
-        banreturntype.reason = list.reason;
-        banreturntype.duration = list.duration;
-        banreturntype.pointer = banlist.indexOf(list);
-        
-        // 检查封禁是否有效（时间大于当前时间或为永久封禁）
-        banreturntype.banned = list.time > System.currentTimeMillis() || list.time == 0;
-        
+    static banreturntype bantimecheck(List<banlisttype> banlist,banlisttype list)
+    {
+        if(list.time>System.currentTimeMillis() || list.duration==0)
+        {
+            banreturntype banreturntype=new banreturntype();
+            banreturntype.banned=true;
+            banreturntype.name=list.name;
+            banreturntype.ip=list.ip;
+            banreturntype.time=list.time;
+            banreturntype.reason=list.reason;
+            banreturntype.duration=list.duration;
+            banreturntype.pointer=banlist.indexOf(list);
+            banreturntype.banid=list.banid;
+            return banreturntype;
+        }
+        banreturntype banreturntype=new banreturntype();
+        banreturntype.banned=false;
+        banreturntype.name=list.name;
+        banreturntype.ip=list.ip;
+        banreturntype.time=list.time;
+        banreturntype.reason=list.reason;
+        banreturntype.duration=list.duration;
+        banreturntype.pointer=banlist.indexOf(list);
+        banreturntype.banid=list.banid;
         return banreturntype;
     }
-    
-    /**
-     * 检查玩家是否被封禁
-     * 
-     * @param banlist 封禁列表
-     * @param name    玩家名称
-     * @param ip      玩家IP地址
-     * @return 封禁信息返回对象，包含封禁状态和详细信息
-     */
-    public static banreturntype isbanned(List<banlisttype> banlist, String name, String ip) {
-        // 首先使用快速IP查找
-        if (checkipfast(ip) != 0) {
-            return bantimecheck(banlist, banlist.get(checkipfast(ip)));
-        }
-        
-        // 如果快速查找未找到，遍历封禁列表
-        for (banlisttype list : banlist) {
-            // 判断玩家是否被封禁（不区分大小写）
-            if (list.name.equalsIgnoreCase(name) || list.ip.equalsIgnoreCase(ip)) {
-                // 检查封禁是否有效
-                return bantimecheck(banlist, list);
+    public static banreturntype isbanned(List<banlisttype> banlist,String name,String ip)
+    {
+        for(banlisttype list:banlist)
+        {   // 判断玩家是否被封禁，目前遍历，不知道大佬们有没有更好的解决方法
+            if(list.name.equalsIgnoreCase(name) || list.ip.equalsIgnoreCase(ip))
+            {
+                // 解封时间判定
+                return bantimecheck(banlist,list);
             }
         }
-        
-        // 如果未找到封禁记录，返回默认的未封禁对象
-        banreturntype banreturntype = new banreturntype();
-        banreturntype.banned = false;
-        banreturntype.name = "";
-        banreturntype.ip = "";
-        banreturntype.time = 0;
-        banreturntype.reason = "";
-        banreturntype.duration = 0;
-        banreturntype.pointer = -1;
+        banreturntype banreturntype=new banreturntype();
+        banreturntype.banned=false;
+        banreturntype.name="";
+        banreturntype.ip="";
+        banreturntype.time=0;
+        banreturntype.reason="";
+        banreturntype.duration=0;
+        banreturntype.pointer=-1;
+        banreturntype.banid=-1;
         return banreturntype;
     }
 }
