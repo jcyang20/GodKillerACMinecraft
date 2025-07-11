@@ -11,19 +11,8 @@ commands:
   ban:
     description: "封禁玩家"
     usage: "/ban <玩家> <原因> <时间>(秒,永封0)"
-    permission: "godkilleracmc.bancontrol.ban"
     aliases: ["totalban","ban-ip","tempban"]
-    permission-message: "&k&6|&r&a[&r&l&6诛仙&r&b&n&o反作弊系统&r&a]&r&k&6| &r&6&l诛啥仙啊,你看你配吗??"
   unban:
     description: "解封玩家"
     usage: "/unban <玩家>"
-    permission: "godkilleracmc.bancontrol.unban"
     aliases: ["unban-ip"]
-    permission-message: "&k&6|&r&a[&r&l&6诛仙&r&b&n&o反作弊系统&r&a]&r&k&6| &r&6&l解啥封印啊,你看你配吗??"
-permissions:
-  godkilleracmc.bancontrol.ban:
-    description: "封禁玩家"
-    default: op
-  godkilleracmc.bancontrol.unban:
-    description: "解封玩家"
-    default: op
