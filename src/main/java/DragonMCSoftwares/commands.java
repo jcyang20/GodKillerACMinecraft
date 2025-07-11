@@ -123,6 +123,7 @@ public class commands
                     if(args.length==3) return Collections.singletonList("请输入封禁时间(单位: 秒, 0永封, 不填默认0)");
                     return Collections.singletonList("填充完成,请执行");
                 }
+                else return Collections.singletonList("你没有权限执行这个指令");
             }
             return null;
         }
