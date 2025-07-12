@@ -14,12 +14,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
 import static DragonMCSoftwares.GodKillerAnticheat.banlist;
 import static org.bukkit.Bukkit.getOnlinePlayers;
+import java.util.logging.Level;
 
 /**
  * 命令处理类
@@ -44,14 +45,21 @@ public class commands
         unbanpermission.setDefault(PermissionDefault.OP);
         plugin.getServer().getPluginManager().addPermission(unbanpermission);
         // 注册命令
-        plugin.getCommand("ban").setExecutor(new bancommandexcute());
-        plugin.getCommand("ban").setTabCompleter(new bancommandcomplete());
-        plugin.getCommand("ban").setUsage("/ban <玩家> <原因> <时间>(秒,永封0)");
-        List<String> aliases=new java.util.ArrayList<>();
-        aliases.add("totalban");
-        aliases.add("tempban");
-        aliases.add("ban-ip");
-        plugin.getCommand("ban").setAliases(aliases);
+        try
+        {
+            plugin.getCommand("ban").setExecutor(new bancommandexcute());
+            plugin.getCommand("ban").setTabCompleter(new bancommandcomplete());
+            plugin.getCommand("ban").setUsage("/ban <玩家> <原因> <时间>(秒,永封0)");
+            List<String> aliases = new java.util.ArrayList<>();
+            aliases.add("totalban");
+            aliases.add("tempban");
+            aliases.add("ban-ip");
+            plugin.getCommand("ban").setAliases(aliases);
+        }
+        catch(Exception e)
+        {
+            logging.log(Level.WARNING,GodKillerAnticheat.chatprefix,"命令注册故障,请向Dragon Minecraft Softwares反馈: "+e);
+        }
         return true;
     }
     /**
@@ -77,11 +85,11 @@ public class commands
                 {
                     try
                     {
-                        Player banedplayer = Bukkit.getPlayer(args[0]);
+                        Player banedplayer=Bukkit.getPlayer(args[0]);
                         // 计算封禁时长（秒转毫秒）
                         long dut = 0;
                         if (args.length >= 3) dut = Long.parseLong(args[2]) * 1000;
-                        if(bannedplayer!=null) banning.ban(banlist,args[0],utils.getplayerip(banedplayer),0,dut,args[1],false,System.currentTimeMillis());
+                        if(banedplayer!=null) banning.ban(banlist,args[0],utils.getplayerip(banedplayer),0,dut,args[1],false,System.currentTimeMillis());
                         sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatprefix + "&a&l成功将玩家 &e"+args[0]+" &a以&b "+args[1]+" &a为理由封印&9 "+args[2]+" &a秒&r"));
                         return true;
                     }

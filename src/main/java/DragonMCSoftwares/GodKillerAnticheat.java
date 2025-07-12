@@ -1,6 +1,6 @@
 package DragonMCSoftwares;
-
-import DragonMCSoftwares.banning.banlisttype;
+// 修复IP反绕！
+import DragonMCSoftwares.banning.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -39,6 +39,11 @@ public final class GodKillerAnticheat extends JavaPlugin implements Listener
      * 存储所有被封禁玩家的信息
      */
     public static List<banlisttype> banlist = new ArrayList<>();
+    /**
+     * 封禁信息
+     * 存储封禁信息
+     */
+    public static List<baninfotype> baninfolist=new ArrayList<>();
     @Override
     public void onEnable()
     {
@@ -51,7 +56,7 @@ public final class GodKillerAnticheat extends JavaPlugin implements Listener
         // 加载配置文件
         loging(Level.INFO,"插件配置加载完成");
         loging(Level.INFO,"正在加载bStats,这不会收集你的个人数据,请放心使用...");
-//        Metrics metrics = new Metrics(this,26100);
+//      Metrics metrics = new Metrics(this,26100);
         loging(Level.INFO,"bStats加载完成");
         loging(Level.INFO,"正在注册命令...");
         commands.commandinit();
@@ -64,16 +69,16 @@ public final class GodKillerAnticheat extends JavaPlugin implements Listener
     {
         loging(Level.INFO,"玩家["+event.getName()+"]("+event.getAddress()+")尝试登录服务器,正在审查流量.....");
         loging(Level.INFO,"玩家["+event.getName()+"]("+event.getAddress()+")登陆审查:检查封禁.....");
-        banning.banreturntype baninfo=banning.isbanned(banlist,event.getName(),event.getAddress().toString());  // 获取FJ数据
+        banreturntype baninfo=banning.isbanned(banlist,event.getName(),event.getAddress().toString());  // 获取FJ数据
         if(baninfo.banned)
         {
+            baninfotype bandatainfo=baninfolist.get(baninfo.banid);
             // 封禁中
-            if(baninfo.duration==0) event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED,logging.ChangeColorcode(banprefix+"\n&b诛仙!你被封印了!"+ "\n&6&k|&r&6&l剩余封印时间&r&6&k| &r&a&n"+logging.ChangeColorcode("&4永久")+"&r\n&c&l理由: &r&e&n"+baninfo.reason));
-            else event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED,logging.ChangeColorcode(banprefix+"\n&b诛仙!你被封印了!"+ "\n&6&k|&r&6&l剩余封印时间&r&6&k| &r&a&n"+ formattimeprd(baninfo.time-currentTimeMillis(),logging.ChangeColorcode("&byyyy&4年 &bMM&c月 &bdd&e天 | &bHH&2小时 &bmm&a分钟 &bss&9秒"))+"&r"+"\n&c&l理由: &r&e&n"+baninfo.reason));
+            if(bandatainfo.duration==0) event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED,logging.ChangeColorcode(banprefix+"\n&b诛仙!你被封印了!"+ "\n&6&k|&r&6&l剩余封印时间&r&6&k| &r&a&n"+logging.ChangeColorcode("&4永久")+"&r\n&c&l理由: &r&e&n"+bandatainfo.reason));
+            else event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED,logging.ChangeColorcode(banprefix+"\n&b诛仙!你被封印了!"+ "\n&6&k|&r&6&l剩余封印时间&r&6&k| &r&a&n"+ formattimeprd(bandatainfo.time-currentTimeMillis(),logging.ChangeColorcode("&byyyy&4年 &bMM&c月 &bdd&e天 | &bHH&2小时 &bmm&a分钟 &bss&9秒"))+"&r"+"\n&c&l理由: &r&e&n"+bandatainfo.reason));
             // 封禁信息提示至log
-            
-            loging(Level.INFO,"被封印玩家"+event.getName()+"被踢出了服务器,理由: "+baninfo.reason+"剩余封印时间: "+ formattimeprd(baninfo.time-currentTimeMillis(),logging.ChangeColorcode("&byyyy&4年 &bMM&c月 &bdd&e天 | &bHH&2小时 &bmm&a分钟 &bss&9秒")));
-            if(event.getName()!=baninfo.name)
+            loging(Level.INFO,"被封印玩家"+event.getName()+"被踢出了服务器,理由: "+bandatainfo.reason+" 剩余封印时间: "+ formattimeprd(bandatainfo.time-currentTimeMillis(),logging.ChangeColorcode("&byyyy&4年 &bMM&c月 &bdd&e天 | &bHH&2小时 &bmm&a分钟 &bss&9秒")));
+            if(!event.getName().equals(baninfo.name))
             {
                 boolean flag=true;
                 for(banlisttype list:banlist) if(list.name.equalsIgnoreCase(event.getName()))
@@ -83,14 +88,14 @@ public final class GodKillerAnticheat extends JavaPlugin implements Listener
                 }
                 if(flag)
                 {
-                    banning.addban(banlist, event.getName(), baninfo.ip, baninfo.time, baninfo.reason, baninfo.duration, baninfo.banid);
-                    loging(Level.WARNING, "玩家[" + event.getName() + "](" + event.getAddress() + ")登陆审查: 玩家尝试了进行用户名绕过!已更新数据库!");
+                    banning.addban(banlist, event.getName(),baninfo.ip,bandatainfo.banid);
+                    loging(Level.WARNING,"玩家[" + event.getName() + "](" + event.getAddress() + ")登陆审查: 玩家尝试了进行用户名绕过!已更新数据库!");
                 }
             }
-            if(!Objects.equals(event.getAddress().toString(), baninfo.ip))
+            if(!Objects.equals(event.getAddress().toString(),baninfo.ip))
             {
                 boolean flag=true;
-                for(banlisttype list:banlist) if(list.ip.split("/")[0].equalsIgnoreCase(event.getAddress().toString().split("/")[0]))
+                for(banlisttype list:banlist) if(list.ip.equalsIgnoreCase(event.getAddress().toString()))
                 {
                     flag=false;                                                                                                 // 封禁反绕过
                     break;
@@ -99,9 +104,7 @@ public final class GodKillerAnticheat extends JavaPlugin implements Listener
                 {
                     banlisttype thisplayer = banlist.get(baninfo.pointer);
                     thisplayer.ip = event.getAddress().toString();
-                    thisplayer.duration = baninfo.duration;
-                    thisplayer.time = baninfo.time;
-                    banning.addban(banlist, thisplayer.name, thisplayer.ip, thisplayer.time, thisplayer.reason, thisplayer.duration, baninfo.banid);
+                    banning.addban(banlist,thisplayer.name,thisplayer.ip,baninfo.banid);
                     loging(Level.WARNING, "玩家[" + event.getName() + "](" + event.getAddress() + ")登陆审查: 玩家尝试了进行IP绕过!已更新数据库!");
                 }
             }
