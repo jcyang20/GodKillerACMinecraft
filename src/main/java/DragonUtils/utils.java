@@ -35,7 +35,7 @@ public class utils
     }
 
     // 格式化阶段性时间
-    public static String formattimeprd(long time,String formatstring)
+    public static String formatTimeprd(long time, String formatstring)
     {
         final long YEAR = 1000L * 60 * 60 * 24 * 365;
         final long MONTH = 1000L * 60 * 60 * 24 * 30;
@@ -63,7 +63,7 @@ public class utils
         return formatstring;
     }
     
-    public static String getplayerip(Player player)
+    public static String getPlayerIp(Player player)
     {
         if(player.getAddress()!=null) return player.getAddress().getAddress().getHostAddress();
         return "null";
