@@ -10,14 +10,12 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+
 import static DragonMCSoftwares.GodKillerAnticheat.banlist;
 import static org.bukkit.Bukkit.getOnlinePlayers;
 import java.util.logging.Level;
@@ -34,7 +32,7 @@ public class commands
      * 
      * @return 初始化成功返回true
      */
-    public static boolean commandinit()
+    public static boolean commandInit()
     {
         GodKillerAnticheat plugin = GodKillerAnticheat.getPlugin(GodKillerAnticheat.class);  // 获取插件类
         // 注册权限
@@ -47,8 +45,8 @@ public class commands
         // 注册命令
         try
         {
-            plugin.getCommand("ban").setExecutor(new bancommandexcute());
-            plugin.getCommand("ban").setTabCompleter(new bancommandcomplete());
+            plugin.getCommand("ban").setExecutor(new banCommandExecute());
+            plugin.getCommand("ban").setTabCompleter(new banCommandComplete());
             plugin.getCommand("ban").setUsage("/ban <玩家> <原因> <时间>(秒,永封0)");
             List<String> aliases = new java.util.ArrayList<>();
             aliases.add("totalban");
@@ -58,7 +56,7 @@ public class commands
         }
         catch(Exception e)
         {
-            logging.log(Level.WARNING,GodKillerAnticheat.chatprefix,"命令注册故障,请向Dragon Minecraft Softwares反馈: "+e);
+            logging.log(Level.WARNING,GodKillerAnticheat.chatPrefix,"命令注册故障,请向Dragon Minecraft Softwares反馈: "+e);
         }
         return true;
     }
@@ -66,18 +64,18 @@ public class commands
      * ban命令执行器
      * 处理玩家封禁命令的执行
      */
-    public static class bancommandexcute implements CommandExecutor   // 封禁执行
+    public static class banCommandExecute implements CommandExecutor   // 封禁执行
     {
         /**
          * 处理命令执行
          * 
          * @param sender  命令发送者
          * @param command 执行的命令
-         * @param lable   命令标签
+         * @param label   命令标签
          * @param args    命令参数
          * @return 命令执行成功返回true，否则返回false
          */
-        public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String lable, @NotNull String[] args)
+        public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, @NotNull String[] args)
         {
             if(command.getName().equalsIgnoreCase("ban"))
             {
@@ -89,17 +87,17 @@ public class commands
                         // 计算封禁时长（秒转毫秒）
                         long dut = 0;
                         if (args.length >= 3) dut = Long.parseLong(args[2]) * 1000;
-                        if(banedplayer!=null) banning.ban(banlist,args[0],utils.getplayerip(banedplayer),0,dut,args[1],false,System.currentTimeMillis());
-                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatprefix + "&a&l成功将玩家 &e"+args[0]+" &a以&b "+args[1]+" &a为理由封印&9 "+args[2]+" &a秒&r"));
+                        if(banedplayer!=null) banning.ban(banlist,args[0],utils.getPlayerIp(banedplayer),0,dut,args[1],false,System.currentTimeMillis());
+                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&a&l成功将玩家 &e"+args[0]+" &a以&b "+args[1]+" &a为理由封印&9 "+args[2]+" &a秒&r"));
                         return true;
                     }
                     catch (Exception e)
                     {
-                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatprefix + "&4&l请输入正确的参数,故障提示: "+e+"&r"));
+                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&4&l请输入正确的参数,故障提示: "+e+"&r"));
                         return false;
                     }
                 }
-                sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatprefix+"&r&6&l诛啥仙啊,你看你配吗??"));
+                sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix +"&r&6&l诛啥仙啊,你看你配吗??"));
             }
             return false;
         }
@@ -109,18 +107,18 @@ public class commands
      * ban命令补全器
      * 提供命令参数的自动补全功能
      */
-    public static class bancommandcomplete implements TabCompleter // 命令补全
+    public static class banCommandComplete implements TabCompleter // 命令补全
     {
          /**
          * 处理命令补全
          * 
          * @param sender  命令发送者
          * @param command 执行的命令
-         * @param lable   命令标签
+         * @param label   命令标签
          * @param args    当前已输入的参数
          * @return 补全建议列表，如果没有建议则返回null
          */
-        public List<String> onTabComplete(@NotNull CommandSender sender, Command command, @NotNull String lable, @NotNull String[] args)
+        public List<String> onTabComplete(@NotNull CommandSender sender, Command command, @NotNull String label, @NotNull String[] args)
         {
             if(command.getName().equalsIgnoreCase("ban"))
             {
