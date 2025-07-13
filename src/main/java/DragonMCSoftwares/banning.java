@@ -263,21 +263,8 @@ public class banning {
      */
     static BanReturnType banTimeCheck(String name, String ip, BanInfoType list)
     {
-        if(list.time>System.currentTimeMillis() || list.duration==0)
-        {
-            BanReturnType banreturntype=new BanReturnType();
-            banreturntype.banned=true;
-            banreturntype.name=name;
-            banreturntype.ip=ip;
-            banreturntype.time=list.time;
-            banreturntype.reason=list.reason;
-            banreturntype.duration=list.duration;
-            banreturntype.pointer=banlist.indexOf(list);
-            banreturntype.banId =list.banId;
-            return banreturntype;
-        }
         BanReturnType banreturntype=new BanReturnType();
-        banreturntype.banned=false;
+        banreturntype.banned = (list.time > System.currentTimeMillis() || list.duration == 0);
         banreturntype.name=name;
         banreturntype.ip=ip;
         banreturntype.time=list.time;
