@@ -99,6 +99,16 @@ public class commands
                         sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&4&l缺少参数！&r"));
                         return false;
                     }
+                    catch (NumberFormatException e)
+                    {
+                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&4&l参数格式错误！&r"));
+                        return false;
+                    }
+                    catch (Exception e)
+                    {
+                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&4&l未知错误！&r"));
+                        return false;
+                    }
                 }
                 sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix +"&r&6&l诛啥仙啊,你看你配吗??"));
             }
@@ -121,6 +131,11 @@ public class commands
                     catch (java.lang.ArrayIndexOutOfBoundsException e)
                     {
                         sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&4&l缺少参数！&r"));
+                        return false;
+                    }
+                    catch (Exception e)
+                    {
+                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&4&l未知错误！&r"));
                         return false;
                     }
                 }
