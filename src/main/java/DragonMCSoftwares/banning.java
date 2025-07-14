@@ -7,6 +7,8 @@ package DragonMCSoftwares;
 import DragonUtils.logging;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import static DragonUtils.utils.formatTimeprd;
@@ -229,11 +231,17 @@ public class banning {
     public static int mercyWave(List<BanListType> banlist, long timeBefore)
     {
         int count = 0;
-        // 注意：在遍历集合的同时修改集合可能会导致ConcurrentModificationException
-        // 应该使用迭代器或创建一个要移除的元素列表
         List<BanInfoType> toRemove = new java.util.ArrayList<>();
-        for (BanInfoType banInfoThing:baninfolist)
+        Iterator<BanInfoType> iterator = baninfolist.iterator();
+        while (iterator.hasNext())
         {
+            iterator.next();
+            BanInfoType banInfoThing;
+            if (!iterator.hasNext())
+            {
+                break;
+            }
+            banInfoThing = iterator.next();
             if (banInfoThing.time <= timeBefore + System.currentTimeMillis())
             {
                 toRemove.add(banInfoThing);
