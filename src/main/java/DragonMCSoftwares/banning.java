@@ -8,8 +8,10 @@ import DragonUtils.logging;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import static DragonUtils.utils.formatTimeprd;
 import static DragonMCSoftwares.GodKillerAnticheat.*;
@@ -284,13 +286,12 @@ public class banning {
     }
     public static BanReturnType isBanned(List<BanListType> banlist, String name, String ip)
     {
-        for(BanListType list:banlist)
-        {   // 判断玩家是否被封禁，目前遍历，不知道大佬们有没有更好的解决方法
-            if(list.name.equalsIgnoreCase(name) || list.ip.equalsIgnoreCase(ip))
-            {
-                // 解封时间判定
-                return banTimeCheck(list.name,list.ip,baninfolist.get(list.banId));
-            }
+        Optional<BanListType> banListThing = banlist.stream().filter(list->list.name.equalsIgnoreCase(name) || list.ip.equalsIgnoreCase(ip)).findFirst();
+        if(banListThing.isPresent())
+        {
+            BanListType list=banListThing.get();
+            // 解封时间判定
+            return banTimeCheck(list.name,list.ip,baninfolist.get(list.banId));
         }
         BanReturnType banreturntype=new BanReturnType();
         banreturntype.banned=false;
