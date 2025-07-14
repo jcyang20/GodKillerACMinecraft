@@ -8,7 +8,6 @@ import DragonUtils.logging;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +35,13 @@ public class banning {
      */
     public static class BanListType // 封禁信息储存
     {
+        public BanListType() {}
+        public BanListType(String name, String ip, int banId) {
+            this.name=name;
+            this.ip=ip;
+            this.banId =banId;
+        }
+
         public String name;      // 玩家名称
         public String ip;        // 玩家IP
         public int banId;
@@ -46,6 +52,13 @@ public class banning {
      */
     public static class BanInfoType
     {
+        public BanInfoType() {}
+        public BanInfoType(long time, String reason, long duration, int banId) {
+            this.time=time;
+            this.reason=reason;
+            this.duration=duration;
+            this.banId =banId;
+        }
         public long time;        // 解封时间（时间戳） 
         public String reason;    // 封禁原因
         public long duration;    // 封禁持续时间（毫秒）
@@ -58,6 +71,26 @@ public class banning {
      */
     public static class BanReturnType // 封禁信息返回
     {
+        public BanReturnType() {
+            this.banned=false;
+            this.name="";
+            this.ip="";
+            this.time=0;
+            this.reason="";
+            this.duration=0;
+            this.pointer=-1;
+            this.banId =-1;
+        }
+        public BanReturnType(boolean banned, String name, String ip, long time, String reason, long duration, int pointer, int banId) {
+            this.banned=banned;
+            this.name=name;
+            this.ip=ip;
+            this.time=time;
+            this.reason=reason;
+            this.duration=duration;
+            this.pointer=pointer;
+            this.banId =banId;
+        }
         public boolean banned;  // 是否被封禁
         public String name;     // 玩家名称
         public String ip;       // 玩家IP地址
@@ -81,15 +114,8 @@ public class banning {
      */
     public static boolean addBan(List<BanListType> banlist, String name, String ip, long time, String reason, long duration)  // 封禁信息添加
     {
-        BanListType banListThing=new BanListType();
-        banListThing.name=name;
-        banListThing.ip=ip;
-        BanInfoType BanInfoThing=new BanInfoType();
-        BanInfoThing.time=time;
-        BanInfoThing.reason=reason;
-        BanInfoThing.duration=duration;
-        BanInfoThing.banId =baninfolist.size();
-        banListThing.banId =baninfolist.size();
+        BanListType banListThing=new BanListType(name, ip, baninfolist.size());
+        BanInfoType BanInfoThing=new BanInfoType(time, reason, duration, baninfolist.size());
         banlist.add(banListThing);
         baninfolist.add(BanInfoThing);
         return true;
@@ -105,10 +131,7 @@ public class banning {
      */
     public static boolean addBan(List<BanListType> banlist, String name, String ip, int banId)
     {
-        BanListType banListThing=new BanListType();
-        banListThing.name=name;
-        banListThing.ip=ip;
-        banListThing.banId =banId;
+        BanListType banListThing=new BanListType(name, ip, banId);
         banlist.add(banListThing);
         return true;
     }
@@ -157,9 +180,8 @@ public class banning {
                 }
                 if(banListThing.name.equals(name) && !banListThing.ip.equals(ip))
                 {
-                    BanListType banListNew=banListThing;
-                    banListNew.ip=ip;
-                    banlist.set(banlist.indexOf(banListThing),banListNew);
+                    banListThing.ip=ip;
+                    banlist.set(banlist.indexOf(banListThing), banListThing);
                 }
                 Player banedplayer= Bukkit.getPlayerExact(name);
                 if(banedplayer!=null && banedplayer.isOnline()) banedplayer.kickPlayer(logging.ChangeColorcode(GodKillerAnticheat.banPrefix +"\n&b诛仙!你被封印了!"+ "\n&6&k|&r&6&l剩余封印时间&r&6&k| &r&a&n"+ formatTimeprd(duration,logging.ChangeColorcode("&byyyy&4年 &bMM&c月 &bdd&e天 | &bHH&2小时 &bmm&a分钟 &bss&9秒"))+"&r"+"\n&c&l理由: &r&e&n"+reason));
@@ -273,17 +295,9 @@ public class banning {
      */
     static BanReturnType banTimeCheck(String name, String ip, BanInfoType list)
     {
-        BanReturnType banreturntype=new BanReturnType();
-        banreturntype.banned = (list.time > System.currentTimeMillis() || list.duration == 0);
-        banreturntype.name=name;
-        banreturntype.ip=ip;
-        banreturntype.time=list.time;
-        banreturntype.reason=list.reason;
-        banreturntype.duration=list.duration;
-        banreturntype.pointer=banlist.indexOf(list);
-        banreturntype.banId =list.banId;
-        return banreturntype;
+        return new BanReturnType((list.time > System.currentTimeMillis() || list.duration == 0), name, ip, list.time, list.reason, list.duration, banlist.indexOf(list), list.banId);
     }
+
     public static BanReturnType isBanned(List<BanListType> banlist, String name, String ip)
     {
         Optional<BanListType> banListThing = banlist.stream().filter(list->list.name.equalsIgnoreCase(name) || list.ip.equalsIgnoreCase(ip)).findFirst();
@@ -293,15 +307,6 @@ public class banning {
             // 解封时间判定
             return banTimeCheck(list.name,list.ip,baninfolist.get(list.banId));
         }
-        BanReturnType banreturntype=new BanReturnType();
-        banreturntype.banned=false;
-        banreturntype.name="";
-        banreturntype.ip="";
-        banreturntype.time=0;
-        banreturntype.reason="";
-        banreturntype.duration=0;
-        banreturntype.pointer=-1;
-        banreturntype.banId =-1;
-        return banreturntype;
+        return new BanReturnType();
     }
 }
