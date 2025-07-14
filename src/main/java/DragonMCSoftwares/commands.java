@@ -106,11 +106,13 @@ public class commands
                     }
                     catch (Exception e)
                     {
-                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&4&l未知错误！&r"));
+                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&4&l未知错误！: " + e + "&r"));
                         return false;
                     }
                 }
-                sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix +"&r&6&l诛啥仙啊,你看你配吗??"));
+                else {
+                    sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&r&6&l诛啥仙啊,你看你配吗??"));
+                }
             }
             // unban 逻辑
             else if (command.getName().equalsIgnoreCase("unban"))
