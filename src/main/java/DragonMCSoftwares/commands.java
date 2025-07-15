@@ -4,6 +4,7 @@ package DragonMCSoftwares;
 
 import DragonUtils.logging;
 import DragonUtils.utils;
+import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,6 +19,8 @@ import java.util.List;
 
 import static DragonMCSoftwares.GodKillerAnticheat.banlist;
 import static org.bukkit.Bukkit.getOnlinePlayers;
+
+import java.util.Objects;
 import java.util.logging.Level;
 
 /**
@@ -45,14 +48,14 @@ public class commands
         // 注册命令
         try
         {
-            plugin.getCommand("ban").setExecutor(new banCommandExecute());
-            plugin.getCommand("ban").setTabCompleter(new banCommandComplete());
-            plugin.getCommand("ban").setUsage("/ban <玩家> <原因> <时间>(秒,永封0)");
+            Objects.requireNonNull(plugin.getCommand("ban")).setExecutor(new banCommandExecute());
+            Objects.requireNonNull(plugin.getCommand("ban")).setTabCompleter(new banCommandComplete());
+            Objects.requireNonNull(plugin.getCommand("ban")).setUsage("/ban <玩家> <原因> <时间>(秒,永封0)");
             List<String> aliases = new java.util.ArrayList<>();
             aliases.add("totalban");
             aliases.add("tempban");
             aliases.add("ban-ip");
-            plugin.getCommand("ban").setAliases(aliases);
+            Objects.requireNonNull(plugin.getCommand("ban")).setAliases(aliases);
         }
         catch(Exception e)
         {
@@ -91,13 +94,53 @@ public class commands
                         sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&a&l成功将玩家 &e"+args[0]+" &a以&b "+args[1]+" &a为理由封印&9 "+args[2]+" &a秒&r"));
                         return true;
                     }
+                    catch (java.lang.ArrayIndexOutOfBoundsException e)
+                    {
+                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&4&l缺少参数！&r"));
+                        return false;
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&4&l参数格式错误！&r"));
+                        return false;
+                    }
                     catch (Exception e)
                     {
-                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&4&l请输入正确的参数,故障提示: "+e+"&r"));
+                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&4&l未知错误！: " + e + "&r"));
                         return false;
                     }
                 }
-                sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix +"&r&6&l诛啥仙啊,你看你配吗??"));
+                else {
+                    sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&r&6&l诛啥仙啊,你看你配吗??"));
+                }
+            }
+            // unban 逻辑
+            else if (command.getName().equalsIgnoreCase("unban"))
+            {
+                if (sender.hasPermission("godkilleracmc.bancontrol.ban"))
+                {
+                    try
+                    {
+                        Player unbanplayer = Bukkit.getPlayer(args[0]);
+                        for (banning.BanListType banlistThing:banlist) {
+                            if (unbanplayer != null && banlistThing.name.equals(unbanplayer.getName())) {
+                                banning.unban(banlistThing.banId);
+                                break;
+                            }
+                        }
+                        return true;
+                    }
+                    catch (java.lang.ArrayIndexOutOfBoundsException e)
+                    {
+                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&4&l缺少参数！&r"));
+                        return false;
+                    }
+                    catch (Exception e)
+                    {
+                        sender.sendMessage(logging.ChangeColorcode(GodKillerAnticheat.chatPrefix + "&4&l未知错误！&r"));
+                        return false;
+                    }
+                }
             }
             return false;
         }
