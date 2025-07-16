@@ -32,8 +32,7 @@
             gradle-version: wrapper # Quotes required to prevent YAML converting to number
 
         - name: Build with Gradle
-          run: gradle clean buildNeeded --scan
-
+          run: gradle clean buildNeeded
         - uses: actions/upload-artifact@v4
           with:
             name: Package JAR
